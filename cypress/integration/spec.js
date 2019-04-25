@@ -15,14 +15,17 @@ context('Chainsaw Direct', () => {
     cy.get('.regPrice')
       .should('have.length.gt', 0)
       .then($prices => {
+        // remove "$" from prices and convert to strings
         const prices = $prices
           .toArray()
           .map($el => parseFloat($el.innerText.substr(1)))
+        // assertion comes from chai-sorted
         expect(prices).to.be.sorted()
       })
   })
 
   it('finds Cypress among the saws', () => {
+    // stub API calls to the search endpoint
     cy.server()
     cy.route('/sayt.php?q=Cypr*', {
       suggestions: [
@@ -36,7 +39,29 @@ context('Chainsaw Direct', () => {
 
     // by stubbing search XHRs we can return a single
     // result when typing "Cypress" into the search box
-    cy.get('#searchText').type('Cypress')
+    cy.get('#searchText').type('Cypress', { delay: 100 })
+    cy.get('.autocomplete-suggestion')
+      .should('have.length', 1)
+      .first()
+      .should('have.text', 'Cypress Test Runner')
+  })
+
+  it('goes to Cypress search result', () => {
+    // stub API calls to the search endpoint
+    cy.server()
+    cy.route('/sayt.php?q=Cypr*', {
+      suggestions: [
+        {
+          value: 'Cypress Test Runner',
+          data: 1,
+          exactMatch: 1
+        }
+      ]
+    })
+
+    // by stubbing search XHRs we can return a single
+    // result when typing "Cypress" into the search box
+    cy.get('#searchText').type('Cypress', { delay: 100 })
     cy.get('.autocomplete-suggestion')
       .should('have.length', 1)
       .first()
