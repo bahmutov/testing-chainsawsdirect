@@ -1,3 +1,4 @@
 {
-  "baseUrl": "https://www.chainsawsdirect.com"
+  "baseUrl": "https://www.chainsawsdirect.com",
+  "blacklistHosts": "wrs.adrsp.net"
 }
